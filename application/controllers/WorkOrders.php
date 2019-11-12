@@ -2,11 +2,12 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 require APPPATH . 'libraries/REST_Controller.php';
 
-class WorkOrder extends REST_Controller
+class WorkOrders extends REST_Controller
 {
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('WorkOrders_Model');
 
     }
     public function index()
@@ -21,7 +22,7 @@ class WorkOrder extends REST_Controller
      */
     public function index_get($id = 0)
     {
-        $directors = array("Alfred Hitchcock", "Stanley Kubrick", "Martin Scorsese", "Fritz Lang");
+        $directors = array("Alfred Hitchcock");
 
         $this->response($directors, REST_Controller::HTTP_OK);
     }
@@ -58,16 +59,13 @@ class WorkOrder extends REST_Controller
 
         $this->response(['Delete working'], REST_Controller::HTTP_OK);
     }
-    public function getWorkOrdersById($work_order_id = 0)
+    public function getWorkOrdersById_get()
     {
-        $directors = array("Alfred Hitchcock", "Stanley Kubrick", "Martin Scorsese", "Fritz Lang");
-        if (!empty($work_order_id)) {
-            // $data = $this->db->get_where("items", ['id' => $id])->row_array();
-        } else {
-            // $data = $this->db->get("items")->result();
-        }
+        $work_order_id = $this->get('work_order_id');
 
-        $this->response($directors, REST_Controller::HTTP_OK);
+        $work_orders_list = $this->WorkOrders_Model->getWorkOrdersById($work_order_id);
+
+        $this->response($work_orders_list, REST_Controller::HTTP_OK);
 
     }
 }
