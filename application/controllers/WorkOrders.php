@@ -6,9 +6,10 @@ class WorkOrders extends REST_Controller
 {
     public function __construct()
     {
+        header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
         parent::__construct();
         $this->load->model('WorkOrders_Model');
-
     }
     public function index()
     {
@@ -65,7 +66,6 @@ class WorkOrders extends REST_Controller
         $work_orders_list = $this->WorkOrders_Model->getAllWorkOrders();
 
         $this->response($work_orders_list, REST_Controller::HTTP_OK);
-
     }
     public function getWorkOrdersById_get()
     {
@@ -74,7 +74,6 @@ class WorkOrders extends REST_Controller
         $work_orders_list = $this->WorkOrders_Model->getWorkOrdersById($work_order_id);
 
         $this->response($work_orders_list, REST_Controller::HTTP_OK);
-
     }
 
     public function createWorkOrder_post()
@@ -96,7 +95,6 @@ class WorkOrders extends REST_Controller
         $this->WorkOrders_Model->createWorkOrder($db_values);
 
         $this->response(["Work Order Created Successfully"], REST_Controller::HTTP_OK);
-
     }
     public function updateWorkOrdersById_put()
     {
@@ -118,7 +116,6 @@ class WorkOrders extends REST_Controller
         $this->WorkOrders_Model->updateWorkOrdersById($ID, $db_values);
 
         $this->response(["Work Order Updated Successfully"], REST_Controller::HTTP_OK);
-
     }
     public function deleteWorkOrdersById_delete($work_order_id)
     {
@@ -126,6 +123,5 @@ class WorkOrders extends REST_Controller
         $this->WorkOrders_Model->deleteWorkOrdersById($work_order_id);
 
         $this->response(["Work Order Deleted Successfully"], REST_Controller::HTTP_OK);
-
     }
 }

@@ -6,9 +6,10 @@ class Assets extends REST_Controller
 {
     public function __construct()
     {
+        header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
         parent::__construct();
         $this->load->model('Assets_Model');
-
     }
     public function index()
     {
@@ -65,7 +66,6 @@ class Assets extends REST_Controller
         $assets_list = $this->Assets_Model->getAllAssets();
 
         $this->response($assets_list, REST_Controller::HTTP_OK);
-
     }
     public function getAssetById_get()
     {
@@ -74,7 +74,6 @@ class Assets extends REST_Controller
         $assets_list = $this->Assets_Model->getAssetById($asset_id);
 
         $this->response($assets_list, REST_Controller::HTTP_OK);
-
     }
 
     public function addNewAsset_post()
@@ -93,7 +92,6 @@ class Assets extends REST_Controller
         $this->Assets_Model->addNewAsset($db_values);
 
         $this->response(["New Asset Added Successfully"], REST_Controller::HTTP_OK);
-
     }
     public function updateAssetsById_put()
     {
@@ -112,7 +110,6 @@ class Assets extends REST_Controller
         $this->Assets_Model->updateAssetsById($AssetID, $db_values);
 
         $this->response(["Asset Updated Successfully"], REST_Controller::HTTP_OK);
-
     }
     public function deleteAssetById_delete($asset_id)
     {
@@ -120,6 +117,5 @@ class Assets extends REST_Controller
         $this->Assets_Model->deleteAssetById($asset_id);
 
         $this->response(["Asset Deleted Successfully"], REST_Controller::HTTP_OK);
-
     }
 }
