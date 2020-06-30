@@ -23,20 +23,16 @@ class Parts_Model extends CI_Model
 
         $this->db->where('PartsID', $parts_id);
         $this->db->update('parts', $data);
-
     }
 
     public function addNewPart($data)
     {
 
         $this->db->insert('parts', $data);
-
     }
     public function deletePartsById($parts_id)
     {
 
         $this->db->delete('parts', array('PartsID' => $parts_id));
-
     }
-
 }

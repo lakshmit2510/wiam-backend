@@ -9,7 +9,7 @@ class PurchaseOrders extends REST_Controller
         header('Access-Control-Allow-Origin: *');
         header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
         parent::__construct();
-        $this->load->model('Suppliers_Model');
+        $this->load->model('Purchaseorders_Model');
     }
     public function index()
     {
@@ -81,15 +81,11 @@ class PurchaseOrders extends REST_Controller
     public function addNewPurchaseorder_post()
     {
         $db_values = array();
-        // $db_values['AssetCode'] = $this->post('AssetCode');
+        $db_values['PurchaseOrderNumber'] = $this->post('PurchaseOrderNumber');
+        $db_values['PartsNo'] = $this->post('number');
+        $db_values['RequestedQTY'] = $this->post('Quantity');
         $db_values['SupplierName'] = $this->post('SupplierName');
-        $db_values['EmailAdress'] = $this->post('EmailAdress');
-        $db_values['PhoneNumber'] = $this->post('PhoneNumber');
-        $db_values['WebsiteName'] = $this->post('WebsiteName');
-        $db_values['Country'] = $this->post('Country');
-        $db_values['BusinessType'] = $this->post('BusinessType');
-        // $db_values['Category'] = $this->post('Category');
-        // $db_values['StockCount'] = $this->post('StockCount');
+        $db_values['UnitPrice'] = $this->post('Unitprice');
 
         $this->Purchaseorders_Model->addNewPurchaseorder($db_values);
 
