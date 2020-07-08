@@ -51,4 +51,26 @@ class Users extends REST_Controller
 
         $this->response($res, REST_Controller::HTTP_OK);
     }
+
+    public function getAllUsersList_get()
+    {
+        $users_list = $this->Users_Model->getAllUsers();
+
+        $this->response($users_list, REST_Controller::HTTP_OK);
+    }
+    public function addNewUser_post()
+    {
+        $db_values = array();
+        $db_values['UserName'] = $this->post('');
+        $db_values['EmailAddress1'] = $this->post('');
+        $db_values['EmailAddress2'] = $this->post('');
+        $db_values['PhoneNumber'] = $this->post('');
+        $db_values['Password'] = $this->post('');
+        $db_values['Role'] = $this->post('');
+        $db_values['CompanyName'] = $this->post('');
+        $db_values['CompanyAddress'] = $this->post('');
+        $db_values['Active'] = 1;
+
+        $this->Users_Model->saveUser($db_values);
+    }
 }

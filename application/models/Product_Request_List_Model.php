@@ -24,17 +24,23 @@ class Product_Request_List_Model extends CI_Model
         return $query->result();
     }
 
+    public function addRequestForm($record)
+    {
+        $query = $this->db->insert('Product_Request_List', $record);
+    }
+
+    public function getMax()
+    {
+        $this->db->select('max(RequestId) AS Booked');
+        $r = $this->db->get('Product_Request_List')->row();
+        return $r->Booked + 1;
+    }
+
     public function updateRequestsListById($Request_id, $data)
     {
 
         $this->db->where('RequestId', $Request_id);
         $this->db->update('Product_Request_List', $data);
-    }
-
-    public function addNewRequestList($data)
-    {
-
-        $this->db->insert('Product_Request_List', $data);
     }
     public function deleteRequestsListById($Request_id)
     {

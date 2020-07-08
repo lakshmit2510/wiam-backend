@@ -3,10 +3,14 @@
 class Parts_Model extends CI_Model
 {
 
-    public function getAllParts()
+    public function getAllParts($category)
     {
-        $query = $this->db->get('parts');
-
+        $query = '';
+        if ($category) {
+            $query = $this->db->get_where('parts', array('Category' => $category));
+        } else {
+            $query = $this->db->get('parts');
+        }
         return $query->result();
     }
 

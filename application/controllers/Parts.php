@@ -13,7 +13,7 @@ class Parts extends REST_Controller
         if ($method == "OPTIONS") {
             die();
         }
-        
+
         parent::__construct();
         $this->load->model('Parts_Model');
     }
@@ -68,17 +68,16 @@ class Parts extends REST_Controller
     }
     public function getAllParts_get()
     {
-
-        $parts_list = $this->Parts_Model->getAllParts();
+        $category = $this->get('category');
+        $parts_list = $this->Parts_Model->getAllParts($category);
 
         $this->response($parts_list, REST_Controller::HTTP_OK);
     }
 
-    public function getPartsById_get()
+    public function getPartsById_get($id)
     {
-        $parts_id = $this->get('parts_id');
 
-        $parts_list = $this->Parts_Model->getPartsById($parts_id);
+        $parts_list = $this->Parts_Model->getPartsById($id);
 
         $this->response($parts_list, REST_Controller::HTTP_OK);
     }
@@ -97,27 +96,37 @@ class Parts extends REST_Controller
         $db_values['Category'] = $this->post('productCategory');
         $db_values['QTYInHand'] = $this->post('quantityInHand');
         $db_values['VendorName'] = $this->post('vendorName');
+        $db_values['Model'] = $this->post('Model');
+        $db_values['Manufacturer'] = $this->post('Manufacturer');
 
-// print_r($db_values);
+        // print_r($db_values);
         $this->Parts_Model->addNewPart($db_values);
 
         $this->response(["New Product Added Successfully"], REST_Controller::HTTP_OK);
     }
-    public function updatePartsById_put()
+    public function updatePartsById_put($partsId)
     {
+        // print_r($partsId);
+        // exit;
         $db_values = array();
-        $PartsID = $this->put('PartsID');
-        $db_values['PartsName'] = $this->post('PartsName');
-        $db_values['ItemNumber'] = $this->post('ItemNumber');
-        $db_values['SKUNo'] = $this->post('SKUNo');
-        $db_values['Description'] = $this->post('Description');
-        $db_values['QTYInHand'] = $this->post('QTYInHand');
-        $db_values['MinQTY'] = $this->post('MinQTY');
-        $db_values['Manufacturer'] = $this->post('Manufacturer');
+        $db_values['PartsName'] = $this->post('partName');
+        $db_values['ExpiryDate'] = $this->post('expiryDate');
+        $db_values['SKUNo'] = $this->post('location');
+        $db_values['ManufacturingDate'] = $this->post('manufaturingDate');
+        $db_values['CostPrice'] = $this->post('partCostPrice');
+        $db_values['Description'] = $this->post('partDescription');
+        $db_values['ItemNumber'] = $this->post('partNumber');
+        $db_values['SellingPrice'] = $this->post('partSellingPrice');
+        $db_values['Category'] = $this->post('productCategory');
+        $db_values['QTYInHand'] = $this->post('quantityInHand');
+        $db_values['VendorName'] = $this->post('vendorName');
         $db_values['Model'] = $this->post('Model');
-        $db_values['VendorName'] = $this->post('VendorName');
+        $db_values['Manufacturer'] = $this->post('Manufacturer');
 
-        $this->Parts_Model->updatePartsById($PartsID, $db_values);
+        print_r($db_values);
+        exit;
+
+        $this->Parts_Model->updatePartsById($partsId, $db_values);
 
         $this->response(["Parts Updated Successfully"], REST_Controller::HTTP_OK);
     }

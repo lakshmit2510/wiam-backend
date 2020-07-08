@@ -7,10 +7,14 @@ class Quotes extends REST_Controller
     public function __construct()
     {
         header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method, Authorization");
         header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method == "OPTIONS") {
+            die();
+        }
         parent::__construct();
         $this->load->model('Quotes_Model');
-
     }
     public function index()
     {
@@ -61,12 +65,13 @@ class Quotes extends REST_Controller
 
         $this->response(['Delete working'], REST_Controller::HTTP_OK);
     }
+
     public function getAllQuotes_get()
     {
 
         $quotes_list = $this->Quotes_Model->getAllQuotes();
 
         $this->response($quotes_list, REST_Controller::HTTP_OK);
-
     }
+
 }

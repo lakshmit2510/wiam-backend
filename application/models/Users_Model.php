@@ -9,4 +9,16 @@ class Users_Model extends CI_Model
 
         return $query->result();
     }
+
+    public function saveUser($data)
+    {
+        $this->db->insert('users', $data);
+    }
+
+    public function getAllUsers()
+    {
+        $query = $this->db->get('users');
+
+        return $query->result();
+    }
 }
