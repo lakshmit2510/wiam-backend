@@ -16,6 +16,13 @@ class Product_Request_List_Model extends CI_Model
         }
     }
 
+    public function getAllVehicleModels()
+    {
+        $query = $this->db->get('vehicle_models');
+
+        return $query->result();
+    }
+
     public function getRequestsListById($Request_id)
     {
 
