@@ -5,7 +5,7 @@ class Users_Model extends CI_Model
 
     public function getUser($userName, $pass)
     {
-        $query = $this->db->get_where('users', array('UserName' => $userName, "Password" => $pass));
+        $query = $this->db->get_where('users', array('Email' => $userName, "Password" => $pass));
 
         return $query->result();
     }
@@ -20,5 +20,12 @@ class Users_Model extends CI_Model
         $query = $this->db->get('users');
 
         return $query->result();
+    }
+
+    public function isUserExists($email)
+    {
+        $query = $this->db->get_where('users', array('Email' => $email));
+
+        return $query->num_rows();
     }
 }

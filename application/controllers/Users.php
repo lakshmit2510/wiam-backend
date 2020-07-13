@@ -27,7 +27,7 @@ class Users extends REST_Controller
      *
      * @return Response
      */
-    public function index_post($id = 0)
+    public function index_post()
     {
         $directors = array("GET Working");
 
@@ -36,10 +36,10 @@ class Users extends REST_Controller
 
     public function login_post()
     {
-        $userName = $this->post('username');
+        $email = $this->post('email');
         $pass = $this->post('password');
 
-        $userDetails = $this->Users_Model->getUser($userName, $pass);
+        $userDetails = $this->Users_Model->getUser($email, $pass);
         $res = array();
         if ($userDetails) {
             $res['status'] = "ok";
@@ -61,16 +61,25 @@ class Users extends REST_Controller
     public function addNewUser_post()
     {
         $db_values = array();
-        $db_values['UserName'] = $this->post('');
-        $db_values['EmailAddress1'] = $this->post('');
-        $db_values['EmailAddress2'] = $this->post('');
-        $db_values['PhoneNumber'] = $this->post('');
-        $db_values['Password'] = $this->post('');
-        $db_values['Role'] = $this->post('');
-        $db_values['CompanyName'] = $this->post('');
-        $db_values['CompanyAddress'] = $this->post('');
-        $db_values['Active'] = 1;
-
-        $this->Users_Model->saveUser($db_values);
+        $db_values['FirstName'] = $this->post('firstName');
+        $db_values['LastName'] = $this->post('lastName');
+        $db_values['Email'] = $this->post('email');
+        $db_values['Password'] = $this->post('password');
+        $db_values['PhoneNumber'] = $this->post('phoneNumber');
+        $db_values['PhoneNumberPrefix'] = $this->post('phoneNumberPrefix');
+        $db_values['CompanyName'] = $this->post('companyName');
+        $db_values['CompanyAddress'] = $this->post('companyAddress');
+        $db_values['Role'] = 2;
+        $res = array();
+        if ($this->Users_Model->isUserExists($db_values['Email']) > 0) {
+            $res['status'] = "error";
+            $res['message'] = "The email entered is already exists.";
+            $this->response($res, REST_Controller::HTTP_OK);
+        } else {
+            $this->Users_Model->saveUser($db_values);
+            $res['status'] = "ok";
+            $res['message'] = "User created sucessfully";
+            $this->response($res, REST_Controller::HTTP_OK);
+        }
     }
 }
