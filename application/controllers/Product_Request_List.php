@@ -92,6 +92,7 @@ class Product_Request_List extends REST_Controller
         $db_values['Model'] = $this->post('vehicleModel');
         $db_values['PartsList'] = $this->post('partsList');
         $db_values['QTYRequested'] = $this->post('qtyRequested');
+        $db_values['ServiceType'] = $this->post('serviceType');
         $db_values['PartsIssueDate'] = null;
         $db_values['CreatedBy'] = 1;
         $this->Product_Request_List_Model->addRequestForm($db_values);
