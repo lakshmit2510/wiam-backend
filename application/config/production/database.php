@@ -75,9 +75,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost:8889',
-	'username' => 'root',
-	'password' => 'root',
+	'hostname' => 'localhost',
+	'username' => 'developer',
+	'password' => '$Ezwms@Devloper@2020$',
 	'database' => 'wmsez',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
