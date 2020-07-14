@@ -4,6 +4,7 @@ require APPPATH . 'libraries/REST_Controller.php';
 
 class Product_Request_List extends REST_Controller
 {
+    protected $userInfo;
     public function __construct()
     {
         header('Access-Control-Allow-Origin: *');
@@ -15,6 +16,7 @@ class Product_Request_List extends REST_Controller
         }
         parent::__construct();
         $this->load->model('Product_Request_List_Model');
+        $this->userInfo = base64_decode($this->input->get_request_header('Authorization'));
     }
     public function index()
     {

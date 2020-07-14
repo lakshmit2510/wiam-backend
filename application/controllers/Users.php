@@ -1,6 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 require APPPATH . 'libraries/REST_Controller.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 class Users extends REST_Controller
 {
@@ -40,9 +43,20 @@ class Users extends REST_Controller
         $pass = $this->post('password');
 
         $userDetails = $this->Users_Model->getUser($email, $pass);
+
+        $token = array();
+        $token['email'] = $userDetails[0]->Email;
+        $token['date'] = new DateTime();
+        if ($userDetails[0]->Role === 1) {
+            $token['role'] = 'Admin';
+        } else {
+            $token['role'] = 'Company';
+        }
+
         $res = array();
         if ($userDetails) {
             $res['status'] = "ok";
+            $res['token'] = base64_encode(json_encode($token));
             $res['message'] = "User authenticated sucessfully";
         } else {
             $res['status'] = "error";
