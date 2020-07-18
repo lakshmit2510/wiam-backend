@@ -1,19 +1,10 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 require APPPATH . 'libraries/REST_Controller.php';
-error_reporting(0);
 
-// Report runtime errors
-error_reporting(E_ERROR | E_WARNING | E_PARSE);
-
-// Report all errors
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
-// Same as error_reporting(E_ALL);
-ini_set("error_reporting", E_ALL);
-
-// Report all errors except E_NOTICE
-error_reporting(E_ALL & ~E_NOTICE);
 
 class Parts extends REST_Controller
 {
@@ -111,7 +102,7 @@ class Parts extends REST_Controller
         $db_values['VendorName'] = $this->post('vendorName');
         $db_values['Model'] = $this->post('Model');
         $db_values['Manufacturer'] = $this->post('Manufacturer');
-
+        $db_values['Images'] = $this->post('');
         // print_r($db_values);
         $this->Parts_Model->addNewPart($db_values);
 
@@ -133,6 +124,7 @@ class Parts extends REST_Controller
         $db_values['VendorName'] = $this->put('vendorName');
         $db_values['Model'] = $this->put('Model');
         $db_values['Manufacturer'] = $this->put('Manufacturer');
+        $db_values['Images'] = $this->put('');
 
         $this->Parts_Model->updatePartsById($partsId, $db_values);
 

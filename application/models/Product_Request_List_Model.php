@@ -7,7 +7,9 @@ class Product_Request_List_Model extends CI_Model
     {
         $this->db->select('*');
         $this->db->from('Product_Request_List');
+        $this->db->where('Product_Request_List.Active', 1);
         $this->db->join('users', 'Product_Request_List.CreatedBy = users.UserID', 'LEFT');
+        $this->db->join('vehicle_models', 'Product_Request_List.Model = vehicle_models.ModelId', 'LEFT');
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
             return $q->result();
@@ -49,9 +51,20 @@ class Product_Request_List_Model extends CI_Model
         $this->db->where('RequestId', $Request_id);
         $this->db->update('Product_Request_List', $data);
     }
-    public function deleteRequestsListById($Request_id)
-    {
 
-        $this->db->delete('Product_Request_List', array('RequestId' => $Request_id));
+    public function deleteRequestListById($Request_id, $data)
+    {
+        $this->db->where('RequestId', $Request_id);
+        $this->db->update('Product_Request_List', $data);
+    }
+
+    public function updateStock($partId, $stock, $model)
+    {
+        // $this->db->where('ItemNumber', $partId);
+        // $this->db->where('Model', $model);
+        // $this->db->update('Product_Request_List', $data);
+        $this->db->set('QTYInHand', 'QTYInHand-'  . $stock . '', false);
+        $this->db->where('ItemNumber', $partId);
+        $this->db->update('parts');
     }
 }

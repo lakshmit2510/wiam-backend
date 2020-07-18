@@ -84,6 +84,7 @@ class Users extends REST_Controller
         $db_values['CompanyName'] = $this->post('companyName');
         $db_values['CompanyAddress'] = $this->post('companyAddress');
         $db_values['Role'] = 2;
+        $db_values['Active'] = 1;
         $res = array();
         if ($this->Users_Model->isUserExists($db_values['Email']) > 0) {
             $res['status'] = "error";
