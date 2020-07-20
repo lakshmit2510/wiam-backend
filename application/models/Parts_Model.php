@@ -22,6 +22,16 @@ class Parts_Model extends CI_Model
         return $query->result();
     }
 
+    public function getPartsInIdSet($parts_ids)
+    {
+        $this->db->select('*')->from('parts');
+        $this->db->or_where_in('PartsID',$parts_ids);
+        
+        return $this->db->get()->result_array();
+    }
+
+    
+
     public function updatePartsById($parts_id, $data)
     {
 

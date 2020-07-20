@@ -86,6 +86,16 @@ class Parts extends REST_Controller
         $this->response($parts_list, REST_Controller::HTTP_OK);
     }
 
+    public function getPartsByCommaId_get()
+    {
+
+        $ItemNumberList = explode(',', $this->get('itemNumbers'));
+        $parts_list = $this->Parts_Model->getPartsInIdSet($ItemNumberList);
+
+        $this->response($parts_list, REST_Controller::HTTP_OK);
+    }
+    
+
     public function addNewPart_post()
     {
         $db_values = array();
@@ -102,7 +112,8 @@ class Parts extends REST_Controller
         $db_values['VendorName'] = $this->post('vendorName');
         $db_values['Model'] = $this->post('Model');
         $db_values['Manufacturer'] = $this->post('Manufacturer');
-        $db_values['Images'] = $this->post('');
+        $db_values['Images'] = $this->post('Images');
+        
         // print_r($db_values);
         $this->Parts_Model->addNewPart($db_values);
 
@@ -124,7 +135,7 @@ class Parts extends REST_Controller
         $db_values['VendorName'] = $this->put('vendorName');
         $db_values['Model'] = $this->put('Model');
         $db_values['Manufacturer'] = $this->put('Manufacturer');
-        $db_values['Images'] = $this->put('');
+        $db_values['Images'] = $this->put('Images');
 
         $this->Parts_Model->updatePartsById($partsId, $db_values);
 
@@ -155,12 +166,15 @@ class Parts extends REST_Controller
 
             $this->load->library('upload', $config);
             //            $this->upload->initialize($config);
+            $uploadData = array();
             if ($this->upload->do_upload('avatar')) {
                 $fileData = $this->upload->data();
-                // if ($fileData) {
-                //     $uploadData['file_path'] = $sub_folder . '/' . $_FILES[$name]['name'];
-                // }
-                $this->response(["Uploaded Successfully."], REST_Controller::HTTP_OK);
+                if ($fileData) {
+                    $uploadData['file_path'] =  $_FILES['avatar']['name'];
+                }
+                $uploadData['message'] = "Uploaded Successfully.";
+                $uploadData['status'] = 'ok';
+                $this->response($uploadData, REST_Controller::HTTP_OK);
             } else {
                 $error = array('error' => $this->upload->display_errors());
                 $this->response($error, REST_Controller::HTTP_OK);

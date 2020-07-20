@@ -83,6 +83,16 @@ class Product_Request_List extends REST_Controller
         $this->response($vehicle_Models_List, REST_Controller::HTTP_OK);
     }
 
+    public function getRequestListById_get()
+    {
+        $request_id = $this->get('requestId');
+        $request_list = $this->Product_Request_List_Model->getRequestsListById($request_id);
+
+        $this->response($request_list, REST_Controller::HTTP_OK);
+    }
+
+    
+
 
     public function saveRequestForm_post()
     {
@@ -105,8 +115,12 @@ class Product_Request_List extends REST_Controller
             $this->Product_Request_List_Model->updateStock($partsIdList[$key], $partsCount[$key], $db_values['Model']);
         }
 
-        $this->Product_Request_List_Model->addRequestForm($db_values);
-        $this->response(["Parts requested form created successfully."], REST_Controller::HTTP_OK);
+        $insertId = $this->Product_Request_List_Model->addRequestForm($db_values);
+        $res = array();
+        $res['insertId'] = $insertId;
+        $res['status']  = 'ok';
+        $res['message'] = "Parts requested form created successfully.";
+        $this->response($res, REST_Controller::HTTP_OK);
     }
 
     public function cancelRequestById_put($id)

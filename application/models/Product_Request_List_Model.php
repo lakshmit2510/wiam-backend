@@ -35,7 +35,8 @@ class Product_Request_List_Model extends CI_Model
 
     public function addRequestForm($record)
     {
-        $query = $this->db->insert('Product_Request_List', $record);
+        $this->db->insert('Product_Request_List', $record);
+        return $this->db->insert_id();
     }
 
     public function getMax()
