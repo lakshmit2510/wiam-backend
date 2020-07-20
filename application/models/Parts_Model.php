@@ -3,11 +3,12 @@
 class Parts_Model extends CI_Model
 {
 
-    public function getAllParts($category)
+    public function getAllParts($dataArr)
     {
+
         $query = '';
-        if ($category) {
-            $query = $this->db->get_where('parts', array('Category' => $category));
+        if (count($dataArr) > 0) {
+            $query = $this->db->get_where('parts', $dataArr);
         } else {
             $query = $this->db->get('parts');
         }
@@ -25,12 +26,12 @@ class Parts_Model extends CI_Model
     public function getPartsInIdSet($parts_ids)
     {
         $this->db->select('*')->from('parts');
-        $this->db->or_where_in('PartsID',$parts_ids);
-        
+        $this->db->or_where_in('PartsID', $parts_ids);
+
         return $this->db->get()->result_array();
     }
 
-    
+
 
     public function updatePartsById($parts_id, $data)
     {

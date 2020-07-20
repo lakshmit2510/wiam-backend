@@ -72,8 +72,18 @@ class Parts extends REST_Controller
     }
     public function getAllParts_get()
     {
+        $dataArr = array();
         $category = $this->get('category');
-        $parts_list = $this->Parts_Model->getAllParts($category);
+        $model = $this->get('model');
+        if ($category) {
+            $dataArr['Category'] =  $category;
+        }
+
+        if ($model) {
+            $dataArr['Model'] =  $model;
+        }
+
+        $parts_list = $this->Parts_Model->getAllParts($dataArr);
 
         $this->response($parts_list, REST_Controller::HTTP_OK);
     }
@@ -94,7 +104,7 @@ class Parts extends REST_Controller
 
         $this->response($parts_list, REST_Controller::HTTP_OK);
     }
-    
+
 
     public function addNewPart_post()
     {
@@ -113,7 +123,7 @@ class Parts extends REST_Controller
         $db_values['Model'] = $this->post('Model');
         $db_values['Manufacturer'] = $this->post('Manufacturer');
         $db_values['Images'] = $this->post('Images');
-        
+
         // print_r($db_values);
         $this->Parts_Model->addNewPart($db_values);
 
