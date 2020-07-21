@@ -46,12 +46,13 @@ class Users extends REST_Controller
 
         $token = array();
         $token['email'] = $userDetails[0]->Email;
+        $token['userID'] = $userDetails[0]->UserID;
         $token['date'] = new DateTime();
 
         if ($userDetails[0]->Role === '1') {
             $token['role'] = 'Admin';
         } else {
-            $token['role'] = 'Company';
+            $token['role'] = 'Customer';
         }
         $res = array();
         if ($userDetails) {

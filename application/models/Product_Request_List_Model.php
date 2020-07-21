@@ -68,4 +68,13 @@ class Product_Request_List_Model extends CI_Model
         $this->db->where('ItemNumber', $partId);
         $this->db->update('parts');
     }
+
+    public function getAllModels() 
+    {
+        $this->db->distinct('Model'); //You may use $this->db->distinct('name');  
+        $this->db->select('Model');
+        $this->db->from('parts');
+        // $this->db->distinct()->SELECT ('Model,PartsID')->from ('parts');
+        return $this->db->get()->result_array();
+    }
 }

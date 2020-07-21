@@ -83,6 +83,8 @@ class Parts extends REST_Controller
             $dataArr['Model'] =  $model;
         }
 
+        $dataArr['Active'] = 1;
+
         $parts_list = $this->Parts_Model->getAllParts($dataArr);
 
         $this->response($parts_list, REST_Controller::HTTP_OK);
@@ -123,12 +125,12 @@ class Parts extends REST_Controller
         $db_values['Model'] = $this->post('Model');
         $db_values['Manufacturer'] = $this->post('Manufacturer');
         $db_values['Images'] = $this->post('Images');
-
         // print_r($db_values);
         $this->Parts_Model->addNewPart($db_values);
 
         $this->response(["New Product Added Successfully"], REST_Controller::HTTP_OK);
     }
+
     public function updatePartsById_put($partsId)
     {
         $db_values = array();
@@ -146,16 +148,18 @@ class Parts extends REST_Controller
         $db_values['Model'] = $this->put('Model');
         $db_values['Manufacturer'] = $this->put('Manufacturer');
         $db_values['Images'] = $this->put('Images');
+        $db_values['CreatedBy'] = 1;
 
         $this->Parts_Model->updatePartsById($partsId, $db_values);
 
         $this->response(["Parts Updated Successfully"], REST_Controller::HTTP_OK);
     }
-    public function deletePartsById_delete($parts_id)
+
+    public function deletePartsById_put($parts_id)
     {
-
-        $this->Parts_Model->deletePartsById($parts_id);
-
+        $db_values['Active'] = 0;
+        $db_values['DeletedOn'] = date("Y-m-d H:i:s");
+        $this->Parts_Model->updatePartsById($parts_id, $db_values);
         $this->response(["Part Deleted Successfully"], REST_Controller::HTTP_OK);
     }
 

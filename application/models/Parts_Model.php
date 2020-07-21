@@ -6,12 +6,7 @@ class Parts_Model extends CI_Model
     public function getAllParts($dataArr)
     {
 
-        $query = '';
-        if (count($dataArr) > 0) {
-            $query = $this->db->get_where('parts', $dataArr);
-        } else {
-            $query = $this->db->get('parts');
-        }
+        $query = $this->db->get_where('parts', $dataArr);
         return $query->result();
     }
 

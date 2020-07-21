@@ -16,7 +16,7 @@ class Product_Request_List extends REST_Controller
         }
         parent::__construct();
         $this->load->model('Product_Request_List_Model');
-        $this->userInfo = base64_decode($this->input->get_request_header('Authorization'));
+        $this->userInfo = json_decode(base64_decode($this->input->get_request_header('Authorization')));
     }
     public function index()
     {
@@ -78,7 +78,8 @@ class Product_Request_List extends REST_Controller
     public function getAllVehicleModels_get()
     {
 
-        $vehicle_Models_List = $this->Product_Request_List_Model->getAllVehicleModels();
+        // $vehicle_Models_List = $this->Product_Request_List_Model->getAllVehicleModels();
+        $vehicle_Models_List = $this->Product_Request_List_Model->getAllModels();
 
         $this->response($vehicle_Models_List, REST_Controller::HTTP_OK);
     }
@@ -107,7 +108,7 @@ class Product_Request_List extends REST_Controller
         $db_values['ServiceType'] = $this->post('serviceType');
         $db_values['TechnicianName'] = $this->post('technicianName');
         $db_values['PartsIssueDate'] = null;
-        $db_values['CreatedBy'] = 1;
+        $db_values['CreatedBy'] = $this->userInfo->userID;
         $partsIdList = explode(",", $db_values['PartsList']);
         $partsCount = explode(",", $db_values['QTYRequested']);
         // Update stock count
