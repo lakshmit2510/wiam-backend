@@ -107,8 +107,11 @@ class Product_Request_List extends REST_Controller
         $db_values['QTYRequested'] = $this->post('qtyRequested');
         $db_values['ServiceType'] = $this->post('serviceType');
         $db_values['TechnicianName'] = $this->post('technicianName');
+        $db_values['PartsRequestedDate'] = date("Y-m-d H:i:s");;
         $db_values['PartsIssueDate'] = null;
+        $db_values['Brand'] = $this->post('brand');
         $db_values['CreatedBy'] = $this->userInfo->userID;
+        $db_values['CreatedOn'] = date("Y-m-d H:i:s");
         $partsIdList = explode(",", $db_values['PartsList']);
         $partsCount = explode(",", $db_values['QTYRequested']);
         // Update stock count
@@ -126,8 +129,16 @@ class Product_Request_List extends REST_Controller
 
     public function cancelRequestById_put($id)
     {
+        $data = $this->Product_Request_List_Model->getRequestsListById($id);
+        $partsIdList = explode(",", $data[0]->PartsList);
+        $partsCount = explode(",", $data[0]->QTYRequested);
         $db_values['Active'] = 0;
         $db_values['Status'] = "Cancelled";
+        $db_values['CancelledOn'] = date("Y-m-d H:i:s");
+        // Update stock count
+        foreach ($partsIdList as $key => $value) {
+            $this->Product_Request_List_Model->updateCancelStock($partsIdList[$key], $partsCount[$key]);
+        }
         $this->Product_Request_List_Model->deleteRequestListById($id, $db_values);
 
         $this->response(["Request Form Deleted Successfully"], REST_Controller::HTTP_OK);

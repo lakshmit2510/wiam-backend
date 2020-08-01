@@ -5,7 +5,7 @@ class Purchaseorders_Model extends CI_Model
 
     public function getAllPurchaseorders()
     {
-        $query = $this->db->get('purchaseorders');
+        $query = $this->db->get_where('purchaseorders', array('Active' => 1));
 
         return $query->result();
     }
@@ -13,7 +13,7 @@ class Purchaseorders_Model extends CI_Model
     public function getPurchaseorderById($purchaseorder_id)
     {
 
-        $query = $this->db->get_where('purchaseorders', array('' => $purchaseorder_id));
+        $query = $this->db->get_where('purchaseorders', array('PurchaseOrderID' => $purchaseorder_id));
 
         return $query->result();
     }
@@ -21,7 +21,7 @@ class Purchaseorders_Model extends CI_Model
     public function updatePurchaseordersById($purchaseorder_id, $data)
     {
 
-        $this->db->where('', $purchaseorder_id);
+        $this->db->where('PurchaseOrderID', $purchaseorder_id);
         $this->db->update('purchaseorders', $data);
 
     }

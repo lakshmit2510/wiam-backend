@@ -10,6 +10,7 @@ class Product_Request_List_Model extends CI_Model
         $this->db->where('Product_Request_List.Active', 1);
         $this->db->join('users', 'Product_Request_List.CreatedBy = users.UserID', 'LEFT');
         $this->db->join('vehicle_models', 'Product_Request_List.Model = vehicle_models.ModelId', 'LEFT');
+        $this->db->order_by('RequestId', 'ASC');
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
             return $q->result();
@@ -61,11 +62,15 @@ class Product_Request_List_Model extends CI_Model
 
     public function updateStock($partId, $stock, $model)
     {
-        // $this->db->where('ItemNumber', $partId);
-        // $this->db->where('Model', $model);
-        // $this->db->update('Product_Request_List', $data);
         $this->db->set('QTYInHand', 'QTYInHand-'  . $stock . '', false);
-        $this->db->where('ItemNumber', $partId);
+        $this->db->where('PartsID', $partId);
+        $this->db->update('parts');
+    }
+
+    public function updateCancelStock($partId, $stock)
+    {
+        $this->db->set('QTYInHand', 'QTYInHand+'  . $stock . '', false);
+        $this->db->where('PartsID', $partId);
         $this->db->update('parts');
     }
 

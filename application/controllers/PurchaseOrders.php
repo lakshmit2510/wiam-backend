@@ -4,12 +4,20 @@ require APPPATH . 'libraries/REST_Controller.php';
 
 class PurchaseOrders extends REST_Controller
 {
+    protected $userInfo;
     public function __construct()
     {
         header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method, Authorization");
         header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method == "OPTIONS") {
+            die();
+        }
         parent::__construct();
         $this->load->model('Purchaseorders_Model');
+        $this->load->model('Product_Request_List_Model');
+        $this->userInfo = json_decode(base64_decode($this->input->get_request_header('Authorization')));
     }
     public function index()
     {
@@ -81,38 +89,50 @@ class PurchaseOrders extends REST_Controller
     public function addNewPurchaseorder_post()
     {
         $db_values = array();
-        $db_values['PurchaseOrderNumber'] = $this->post('PurchaseOrderNumber');
-        $db_values['PartsNo'] = $this->post('number');
-        $db_values['RequestedQTY'] = $this->post('Quantity');
-        $db_values['SupplierName'] = $this->post('SupplierName');
-        $db_values['UnitPrice'] = $this->post('Unitprice');
+        $db_values['PurchaseOrderNumber'] = $this->post('purchaseOrderNumber');
+        $db_values['PartsNo'] = $this->post('partsNo');
+        $db_values['RequestedQTY'] = $this->post('QTYToBuy');
+        $db_values['SupplierName'] = $this->post('vendorName');
+        $db_values['UnitPrice'] = $this->post('unitPrice');
+        $db_values['PartName'] = $this->post('partsName');
+        $db_values['EstimatedDateOfDelivery'] = $this->post('estimatedDateOfDelivery');
+        $db_values['CreatedBy'] = $this->userInfo->userID;
+        $db_values['CreatedOn'] = date("Y-m-d H:i:s");
+
+        print_r($db_values);
+        exit;
 
         $this->Purchaseorders_Model->addNewPurchaseorder($db_values);
 
         $this->response(["New PurchaseOrder Added Successfully"], REST_Controller::HTTP_OK);
     }
 
-    public function updatePurchaseordersById_put()
+    public function updatePurchaseordersById_put($po_id)
     {
+        $data = $this->Purchaseorders_Model->getPurchaseorderById($po_id);
         $db_values = array();
-        $SupplierID = $this->put('SupplierID');
-        $db_values['SupplierName'] = $this->post('SupplierName');
-        $db_values['EmailAdress'] = $this->post('EmailAdress');
-        $db_values['PhoneNumber'] = $this->post('PhoneNumber');
-        $db_values['WebsiteName'] = $this->post('WebsiteName');
-        $db_values['Country'] = $this->post('Country');
-        $db_values['BusinessType'] = $this->post('BusinessType');
+        $db_values['ReceivedDate'] = date("Y-m-d");
+        $db_values['Status'] = "Delivered";
+        $quantity = explode(",", $data[0]->RequestedQTY);
+        $partsNo = explode(",", $data[0]->PartsNo);
 
-        $this->Purchaseorders_Model->updatePurchaseordersById($SupplierID, $db_values);
+        // Update stock count
+        foreach ($partsNo as $key => $value) {
+            $this->Product_Request_List_Model->updateCancelStock($partsNo[$key], $quantity[$key]);
+        }
+
+        $this->Purchaseorders_Model->updatePurchaseordersById($po_id, $db_values);
 
         $this->response(["Purchaseorder Updated Successfully"], REST_Controller::HTTP_OK);
     }
 
-    // public function deletePurchaseorderById_delete($supplier_id)
-    // {
+    public function deletePurchaseorderById_put($po_id)
+    {
+        $db_values['Active'] = 0;
+        $db_values['DeletedOn'] = date("Y-m-d");
+        $db_values['Status'] = "Deleted";
+        $this->Purchaseorders_Model->updatePurchaseordersById($po_id, $db_values);
 
-    //     $this->Purchaseorders_Model->deletePurchaseorderById($supplier_id);
-
-    //     $this->response(["Supplier Deleted Successfully"], REST_Controller::HTTP_OK);
-    // }
+        $this->response(["Purchase Order Details Deleted Successfully"], REST_Controller::HTTP_OK);
+    }
 }

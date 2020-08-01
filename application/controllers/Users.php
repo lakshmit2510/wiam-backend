@@ -84,6 +84,7 @@ class Users extends REST_Controller
         $db_values['PhoneNumberPrefix'] = $this->post('phoneNumberPrefix');
         $db_values['CompanyName'] = $this->post('companyName');
         $db_values['CompanyAddress'] = $this->post('companyAddress');
+        $db_values['CreatedOn'] = date("Y-m-d H:i:s");
         $db_values['Role'] = 2;
         $db_values['Active'] = 1;
         $res = array();
@@ -97,5 +98,14 @@ class Users extends REST_Controller
             $res['message'] = "User created sucessfully";
             $this->response($res, REST_Controller::HTTP_OK);
         }
+    }
+
+    public function deleteUserById_put($user_id)
+    {
+        $db_values['Active'] = 0;
+        $db_values['DeletedOn'] = date("Y-m-d");
+        $this->Users_Model->updateUsersById($user_id, $db_values);
+
+        $this->response(["User Details Deleted Successfully"], REST_Controller::HTTP_OK);
     }
 }

@@ -5,7 +5,7 @@ class Suppliers_Model extends CI_Model
 
     public function getAllSuppliers()
     {
-        $query = $this->db->get('suppliers');
+        $query = $this->db->get_where('suppliers',array('Active' => 1));
 
         return $query->result();
     }

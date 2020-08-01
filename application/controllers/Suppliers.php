@@ -4,6 +4,7 @@ require APPPATH . 'libraries/REST_Controller.php';
 
 class Suppliers extends REST_Controller
 {
+    protected $userInfo;
     public function __construct()
     {
         header('Access-Control-Allow-Origin: *');
@@ -15,6 +16,7 @@ class Suppliers extends REST_Controller
         }
         parent::__construct();
         $this->load->model('Suppliers_Model');
+        $this->userInfo = json_decode(base64_decode($this->input->get_request_header('Authorization')));
     }
     public function index()
     {
@@ -86,12 +88,13 @@ class Suppliers extends REST_Controller
     public function addNewSupplier_post()
     {
         $db_values = array();
-        // $db_values['AssetCode'] = $this->post('AssetCode');
         $db_values['SupplierName'] = $this->post('supplierName');
         $db_values['EmailAdress'] = $this->post('primaryEmail');
         $db_values['PhoneNumber'] = $this->post('contactNumber');
         $db_values['WebsiteName'] = $this->post('websiteName');
         $db_values['Country'] = $this->post('country');
+        $db_values['CreatedBy'] = $this->userInfo->userID;
+        $db_values['CreatedOn'] = date("Y-m-d H:i:s");
         // $db_values['BusinessType'] = $this->post('BusinessType');
         // $db_values['Category'] = $this->post('Category');
         // $db_values['StockCount'] = $this->post('StockCount');
@@ -101,26 +104,11 @@ class Suppliers extends REST_Controller
         $this->response(["New Supplier Added Successfully"], REST_Controller::HTTP_OK);
     }
 
-    public function updateSuppliersById_put()
+    public function deleteSupplierById_put($supplier_id)
     {
-        $db_values = array();
-        $SupplierID = $this->put('SupplierID');
-        $db_values['SupplierName'] = $this->post('SupplierName');
-        $db_values['EmailAdress'] = $this->post('EmailAdress');
-        $db_values['PhoneNumber'] = $this->post('PhoneNumber');
-        $db_values['WebsiteName'] = $this->post('WebsiteName');
-        $db_values['Country'] = $this->post('Country');
-        $db_values['BusinessType'] = $this->post('BusinessType');
-
-        $this->Suppliers_Model->updateSuppliersById($SupplierID, $db_values);
-
-        $this->response(["Supplier Updated Successfully"], REST_Controller::HTTP_OK);
-    }
-
-    public function deleteSupplierById_delete($supplier_id)
-    {
-
-        $this->Suppliers_Model->deleteSupplierById($supplier_id);
+        $db_values['Active'] = 0;
+        $db_values['DeletedOn'] = date("Y-m-d");
+        $this->Suppliers_Model->updateSuppliersById($supplier_id,$db_values);
 
         $this->response(["Supplier Deleted Successfully"], REST_Controller::HTTP_OK);
     }

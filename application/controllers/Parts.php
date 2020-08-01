@@ -8,6 +8,7 @@ error_reporting(E_ALL);
 
 class Parts extends REST_Controller
 {
+    protected $userInfo;
     public function __construct()
     {
         header('Access-Control-Allow-Origin: *');
@@ -20,6 +21,7 @@ class Parts extends REST_Controller
 
         parent::__construct();
         $this->load->model('Parts_Model');
+        $this->userInfo = json_decode(base64_decode($this->input->get_request_header('Authorization')));
     }
     public function index()
     {
@@ -121,11 +123,15 @@ class Parts extends REST_Controller
         $db_values['SellingPrice'] = $this->post('partSellingPrice');
         $db_values['Category'] = $this->post('productCategory');
         $db_values['QTYInHand'] = $this->post('quantityInHand');
+        $db_values['Units'] = $this->post('units');
         $db_values['VendorName'] = $this->post('vendorName');
         $db_values['Model'] = $this->post('Model');
         $db_values['Manufacturer'] = $this->post('Manufacturer');
         $db_values['Images'] = $this->post('Images');
+        $db_values['CreatedBy'] = $this->userInfo->userID;
+        $db_values['CreatedOn'] = date("Y-m-d H:i:s");
         // print_r($db_values);
+        // exit;
         $this->Parts_Model->addNewPart($db_values);
 
         $this->response(["New Product Added Successfully"], REST_Controller::HTTP_OK);
@@ -144,11 +150,12 @@ class Parts extends REST_Controller
         $db_values['SellingPrice'] = $this->put('partSellingPrice');
         $db_values['Category'] = $this->put('productCategory');
         $db_values['QTYInHand'] = $this->put('quantityInHand');
+        $db_values['Units'] = $this->put('units');
         $db_values['VendorName'] = $this->put('vendorName');
         $db_values['Model'] = $this->put('Model');
         $db_values['Manufacturer'] = $this->put('Manufacturer');
         $db_values['Images'] = $this->put('Images');
-        $db_values['CreatedBy'] = 1;
+        $db_values['CreatedBy'] = $this->userInfo->userID;
 
         $this->Parts_Model->updatePartsById($partsId, $db_values);
 

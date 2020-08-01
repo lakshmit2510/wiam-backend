@@ -17,7 +17,7 @@ class Users_Model extends CI_Model
 
     public function getAllUsers()
     {
-        $query = $this->db->get('users');
+        $query = $this->db->get_where('users', array('Active' => 1));
 
         return $query->result();
     }
@@ -27,5 +27,12 @@ class Users_Model extends CI_Model
         $query = $this->db->get_where('users', array('Email' => $email));
 
         return $query->num_rows();
+    }
+
+    public function updateUsersById($user_id, $data)
+    {
+        $this->db->where('UserID', $user_id);
+        $this->db->update('users', $data);
+
     }
 }
