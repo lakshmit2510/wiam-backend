@@ -34,6 +34,20 @@ class Product_Request_List_Model extends CI_Model
         return $query->result();
     }
 
+    public function getListByDateAndVNo($from, $to, $vNo)
+    {
+        $this->db->select('*');
+        $this->db->from('Product_Request_List');
+        if ($vNo) {
+            $this->db->where('VehicleNo', $vNo);
+        }
+
+        $this->db->where('CreatedOn >=', $from);
+        $this->db->where('CreatedOn <=', $to);
+        
+        return $this->db->get()->result_array();
+    }
+
     public function addRequestForm($record)
     {
         $this->db->insert('Product_Request_List', $record);
@@ -74,11 +88,20 @@ class Product_Request_List_Model extends CI_Model
         $this->db->update('parts');
     }
 
-    public function getAllModels() 
+    public function getAllModels()
     {
         $this->db->distinct('Model'); //You may use $this->db->distinct('name');  
         $this->db->select('Model');
         $this->db->from('parts');
+        // $this->db->distinct()->SELECT ('Model,PartsID')->from ('parts');
+        return $this->db->get()->result_array();
+    }
+
+    public function getVNos()
+    {
+        $this->db->distinct('VehicleNo'); //You may use $this->db->distinct('name');  
+        $this->db->select('VehicleNo');
+        $this->db->from('product_request_list');
         // $this->db->distinct()->SELECT ('Model,PartsID')->from ('parts');
         return $this->db->get()->result_array();
     }

@@ -92,8 +92,23 @@ class Product_Request_List extends REST_Controller
         $this->response($request_list, REST_Controller::HTTP_OK);
     }
 
-    
+    public function getVehicleNoList_get()
+    {
+        $request_list = $this->Product_Request_List_Model->getVNos();
+        $this->response($request_list, REST_Controller::HTTP_OK);
+    }
 
+    public function getRequestListByDate_get()
+    {
+        $from = $this->get('from');
+        $to = $this->get('to');
+        $vNo = $this->get('vNo');
+        if ($vNo === 'all') {
+            $vNo = null;
+        }
+        $request_list = $this->Product_Request_List_Model->getListByDateAndVNo(date("Y-m-d H:i:s", $from), date("Y-m-d H:i:s", $to), $vNo);
+        $this->response($request_list, REST_Controller::HTTP_OK);
+    }
 
     public function saveRequestForm_post()
     {
