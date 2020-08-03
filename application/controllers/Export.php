@@ -81,6 +81,17 @@ class Export extends REST_Controller
             ),
         );
         $sheet->getStyle('A1:G1')->applyFromArray($styleArray);
+        $partsStyleArray = array(
+            'font' => array(
+                'bold' => true,
+            ),
+            'fill' => array(
+                'type'       => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_GRADIENT_LINEAR,
+                'rotation'   => 90,
+                'startcolor' => array('rgb' => '0d0d0d'),
+                'endColor'   => array('rgb' => 'f2f2f2'),
+            ),
+        );
         // auto fit column to content
         foreach (range('A', 'G') as $columnID) {
             $spreadsheet->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
@@ -110,6 +121,7 @@ class Export extends REST_Controller
                 $x++;
                 $sheet->setCellValue('B' . $x, 'PartsName');
                 $sheet->setCellValue('C' . $x, 'QTYInHand');
+                $sheet->getStyle('B' . $x . ':' . 'C' . $x)->applyFromArray($partsStyleArray);
                 foreach ($parts_list as $parts_list_get) {
                     $x++;
                     $sheet->setCellValue('B' . $x, $parts_list_get['PartsName']);
