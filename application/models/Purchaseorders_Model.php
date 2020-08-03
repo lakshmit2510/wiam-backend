@@ -5,9 +5,16 @@ class Purchaseorders_Model extends CI_Model
 
     public function getAllPurchaseorders()
     {
-        $query = $this->db->get_where('purchaseorders', array('Active' => 1));
-
-        return $query->result();
+        $this->db->select('*');
+        $this->db->from('purchaseorders');
+        $this->db->where('purchaseorders.Active', 1);
+        $this->db->join('parts', 'purchaseorders.PartsNo = parts.PartsID', 'LEFT');
+        $q = $this->db->get();
+        if ($q->num_rows() > 0) {
+            return $q->result();
+        } else {
+            return array();
+        }
     }
 
     public function getPurchaseorderById($purchaseorder_id)

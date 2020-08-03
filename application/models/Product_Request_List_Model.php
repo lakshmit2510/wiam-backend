@@ -10,7 +10,7 @@ class Product_Request_List_Model extends CI_Model
         $this->db->where('Product_Request_List.Active', 1);
         $this->db->join('users', 'Product_Request_List.CreatedBy = users.UserID', 'LEFT');
         $this->db->join('vehicle_models', 'Product_Request_List.Model = vehicle_models.ModelId', 'LEFT');
-        $this->db->order_by('RequestId', 'ASC');
+        $this->db->order_by('RequestId', 'DESC');
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
             return $q->result();
@@ -38,6 +38,7 @@ class Product_Request_List_Model extends CI_Model
     {
         $this->db->select('*');
         $this->db->from('Product_Request_List');
+        $this->db->where('Product_Request_List.Active', 1);
         if ($vNo) {
             $this->db->where('VehicleNo', $vNo);
         }

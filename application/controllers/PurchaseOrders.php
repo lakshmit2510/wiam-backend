@@ -99,8 +99,8 @@ class PurchaseOrders extends REST_Controller
         $db_values['CreatedBy'] = $this->userInfo->userID;
         $db_values['CreatedOn'] = date("Y-m-d H:i:s");
 
-        print_r($db_values);
-        exit;
+        // print_r($db_values);
+        // exit;
 
         $this->Purchaseorders_Model->addNewPurchaseorder($db_values);
 
