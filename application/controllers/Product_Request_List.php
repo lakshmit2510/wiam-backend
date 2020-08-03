@@ -103,10 +103,20 @@ class Product_Request_List extends REST_Controller
         $from = $this->get('from');
         $to = $this->get('to');
         $vNo = $this->get('vNo');
+        if (isset($from) && !empty($from)) {
+            $from = date("Y-m-d H:i:s", $from);
+        } else {
+            $from = null;
+        }
+        if (isset($to) && !empty($to)) {
+            $to = date("Y-m-d H:i:s",  $to);
+        } else {
+            $to = null;
+        }
         if ($vNo === 'all') {
             $vNo = null;
         }
-        $request_list = $this->Product_Request_List_Model->getListByDateAndVNo(date("Y-m-d H:i:s", $from), date("Y-m-d H:i:s", $to), $vNo);
+        $request_list = $this->Product_Request_List_Model->getListByDateAndVNo($from, $to, $vNo);
         $this->response($request_list, REST_Controller::HTTP_OK);
     }
 

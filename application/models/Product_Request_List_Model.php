@@ -41,10 +41,13 @@ class Product_Request_List_Model extends CI_Model
         if ($vNo) {
             $this->db->where('VehicleNo', $vNo);
         }
+        if ($from) {
+            $this->db->where('CreatedOn >=', $from);
+        }
+        if ($to) {
+            $this->db->where('CreatedOn <=', $to);
+        }
 
-        $this->db->where('CreatedOn >=', $from);
-        $this->db->where('CreatedOn <=', $to);
-        
         return $this->db->get()->result_array();
     }
 

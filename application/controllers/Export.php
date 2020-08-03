@@ -38,12 +38,24 @@ class Export extends REST_Controller
 
     public function workOrderList_get()
     {
-        $requestId = $this->get('requestId');
-        $work_orders_list = $this->Product_Request_List_Model->getAllRequestsList();
-        // $ItemNumberList = explode(',', $work_orders_list[0]->PartsList);
-        // $parts_list = $this->Parts_Model->getPartsInIdSet($ItemNumberList);
-        // print_r($parts_list);
-        // exit;
+        $from = $this->get('from');
+        $to = $this->get('to');
+        $vNo = $this->get('vNo');
+        if (isset($from) && !empty($from)) {
+            $from = date("Y-m-d H:i:s", $from);
+        } else {
+            $from = null;
+        }
+        if (isset($to) && !empty($to)) {
+            $to = date("Y-m-d H:i:s",  $to);
+        } else {
+            $to = null;
+        }
+        if ($vNo === 'all') {
+            $vNo = null;
+        }
+
+        $work_orders_list = $this->Product_Request_List_Model->getListByDateAndVNo($from, $to, $vNo);
         $spreadsheet = new Spreadsheet(); // instantiate Spreadsheet
         $sheet = $spreadsheet->getActiveSheet();
         // add style to the header
@@ -85,14 +97,14 @@ class Export extends REST_Controller
         // Add some data
         $x = 2;
         foreach ($work_orders_list as $get) {
-            $sheet->setCellValue('A' . $x, $get->RequestId);
-            $sheet->setCellValue('B' . $x, $get->RequestFormNo);
-            $sheet->setCellValue('C' . $x, $get->VehicleNo);
-            $sheet->setCellValue('D' . $x, $get->PartsList);
-            $sheet->setCellValue('E' . $x, $get->QTYRequested);
-            $sheet->setCellValue('F' . $x, $get->PartsRequestedDate);
-            $sheet->setCellValue('G' . $x, $get->CreatedOn);
-            $ItemNumberList = explode(',', $get->PartsList);
+            $sheet->setCellValue('A' . $x, $get['RequestId']);
+            $sheet->setCellValue('B' . $x, $get['RequestFormNo']);
+            $sheet->setCellValue('C' . $x, $get['VehicleNo']);
+            $sheet->setCellValue('D' . $x, $get['PartsList']);
+            $sheet->setCellValue('E' . $x, $get['QTYRequested']);
+            $sheet->setCellValue('F' . $x, $get['PartsRequestedDate']);
+            $sheet->setCellValue('G' . $x, $get['CreatedOn']);
+            $ItemNumberList = explode(',', $get['PartsList']);
             $parts_list = $this->Parts_Model->getPartsInIdSet($ItemNumberList);
             if (count($parts_list) > 0) {
                 $x++;
@@ -110,12 +122,10 @@ class Export extends REST_Controller
 
         $writer = new Xlsx($spreadsheet); // instantiate Xlsx
 
-        $filename = 'list-of-jaegers'; // set filename for excel file to be exported
+        $filename = 'work-order-list'; // set filename for excel file to be exported
 
         header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
-
         $writer->save('php://output');    // download file
-
-        $this->response('get working', REST_Controller::HTTP_OK);
+        exit;
     }
 }
