@@ -120,11 +120,13 @@ class Export extends REST_Controller
             if (count($parts_list) > 0) {
                 $x++;
                 $sheet->setCellValue('B' . $x, 'PartsName');
-                $sheet->setCellValue('C' . $x, 'QTYInHand');
-                $sheet->getStyle('B' . $x . ':' . 'C' . $x)->applyFromArray($partsStyleArray);
+                $sheet->setCellValue('D' . $x, 'Part No.');
+                $sheet->setCellValue('C' . $x, 'Requested QTY');
+                $sheet->getStyle('B' . $x . ':' . 'D' . $x . ':' . 'C' . $x )->applyFromArray($partsStyleArray);
                 foreach ($parts_list as $parts_list_get) {
                     $x++;
                     $sheet->setCellValue('B' . $x, $parts_list_get['PartsName']);
+                    $sheet->setCellValue('D' . $x, $parts_list_get['ItemNumber']);
                     $sheet->setCellValue('C' . $x, $parts_list_get['QTYInHand']);
                 }
             }

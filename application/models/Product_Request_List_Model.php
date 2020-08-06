@@ -34,19 +34,21 @@ class Product_Request_List_Model extends CI_Model
         return $query->result();
     }
 
-    public function getListByDateAndVNo($from, $to, $vNo)
+    public function getListByDateAndVNo($from, $to, $vNo, $Status)
     {
         $this->db->select('*');
         $this->db->from('Product_Request_List');
         $this->db->where('Product_Request_List.Active', 1);
+        $this->db->where('Product_Request_List.Status', $Status);
+        $this->db->join('users', 'Product_Request_List.CreatedBy = users.UserID', 'LEFT');
         if ($vNo) {
             $this->db->where('VehicleNo', $vNo);
         }
         if ($from) {
-            $this->db->where('CreatedOn >=', $from);
+            $this->db->where('Product_Request_List.CreatedOn >=', $from);
         }
         if ($to) {
-            $this->db->where('CreatedOn <=', $to);
+            $this->db->where('Product_Request_List.CreatedOn <=', $to);
         }
 
         return $this->db->get()->result_array();
