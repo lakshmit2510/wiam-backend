@@ -41,6 +41,7 @@ class Export extends REST_Controller
         $from = $this->get('from');
         $to = $this->get('to');
         $vNo = $this->get('vNo');
+        $Status = $this->get('statusType');
         if (isset($from) && !empty($from)) {
             $from = date("Y-m-d H:i:s", $from);
         } else {
@@ -55,7 +56,7 @@ class Export extends REST_Controller
             $vNo = null;
         }
 
-        $work_orders_list = $this->Product_Request_List_Model->getListByDateAndVNo($from, $to, $vNo);
+        $work_orders_list = $this->Product_Request_List_Model->getListByDateAndVNo($from, $to, $vNo, $Status);
         $spreadsheet = new Spreadsheet(); // instantiate Spreadsheet
         $sheet = $spreadsheet->getActiveSheet();
         // add style to the header
@@ -80,7 +81,7 @@ class Export extends REST_Controller
                 'endColor'   => array('rgb' => 'f2f2f2'),
             ),
         );
-        $sheet->getStyle('A1:G1')->applyFromArray($styleArray);
+        $sheet->getStyle('A1:H1')->applyFromArray($styleArray);
         $partsStyleArray = array(
             'font' => array(
                 'bold' => true,
@@ -93,7 +94,7 @@ class Export extends REST_Controller
             ),
         );
         // auto fit column to content
-        foreach (range('A', 'G') as $columnID) {
+        foreach (range('A', 'H') as $columnID) {
             $spreadsheet->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
         }
 
@@ -101,21 +102,27 @@ class Export extends REST_Controller
         $sheet->setCellValue('A1', 'RequestId');
         $sheet->setCellValue('B1', 'RequestFormNo');
         $sheet->setCellValue('C1', 'VehicleNo');
-        $sheet->setCellValue('D1', 'PartsList');
-        $sheet->setCellValue('E1', 'QTYRequested');
-        $sheet->setCellValue('F1', 'PartsRequestedDate');
-        $sheet->setCellValue('G1', 'CreatedOn');
+        $sheet->setCellValue('D1', 'Brand');
+        $sheet->setCellValue('E1', 'Model');
+        $sheet->setCellValue('F1', 'ServiceType');
+        $sheet->setCellValue('G1', 'PartsRequestedDate');
+        $sheet->setCellValue('H1', 'CreatedOn');
         // Add some data
         $x = 2;
         foreach ($work_orders_list as $get) {
             $sheet->setCellValue('A' . $x, $get['RequestId']);
             $sheet->setCellValue('B' . $x, $get['RequestFormNo']);
             $sheet->setCellValue('C' . $x, $get['VehicleNo']);
-            $sheet->setCellValue('D' . $x, $get['PartsList']);
-            $sheet->setCellValue('E' . $x, $get['QTYRequested']);
-            $sheet->setCellValue('F' . $x, $get['PartsRequestedDate']);
-            $sheet->setCellValue('G' . $x, $get['CreatedOn']);
+            $sheet->setCellValue('D' . $x, $get['Brand']);
+            $sheet->setCellValue('E' . $x, $get['Model']);
+            $sheet->setCellValue('F' . $x, $get['ServiceType']);
+            $sheet->setCellValue('G' . $x, $get['PartsRequestedDate']);
+            $sheet->setCellValue('H' . $x, $get['CreatedOn']);
             $ItemNumberList = explode(',', $get['PartsList']);
+            $qtyArr = $this->getQuantityObj($get['QTYRequested'],$get['PartsList']);
+            // $QTYList = explode(',', $get['QTYRequested']);
+            // $QTYList = explode(',', $get['QTYRequested']);
+            
             $parts_list = $this->Parts_Model->getPartsInIdSet($ItemNumberList);
             if (count($parts_list) > 0) {
                 $x++;
@@ -127,7 +134,7 @@ class Export extends REST_Controller
                     $x++;
                     $sheet->setCellValue('B' . $x, $parts_list_get['PartsName']);
                     $sheet->setCellValue('D' . $x, $parts_list_get['ItemNumber']);
-                    $sheet->setCellValue('C' . $x, $parts_list_get['QTYInHand']);
+                    $sheet->setCellValue('C' . $x, $qtyArr[$parts_list_get['PartsID']]);
                 }
             }
             $x++;
@@ -141,5 +148,15 @@ class Export extends REST_Controller
         header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
         $writer->save('php://output');    // download file
         exit;
+    }
+
+    function getQuantityObj($qtyRequested, $partsList){
+            $qtyRequestedArr = explode(',', $qtyRequested);
+            $partsListArr = explode(',', $partsList);
+            $qtyRequested = [];
+            foreach ($qtyRequestedArr as $key => $value) {
+                $qtyRequested[$partsListArr[$key]] = $value;
+            }
+            return $qtyRequested;
     }
 }

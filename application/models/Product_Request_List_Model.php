@@ -9,7 +9,6 @@ class Product_Request_List_Model extends CI_Model
         $this->db->from('Product_Request_List');
         $this->db->where('Product_Request_List.Active', 1);
         $this->db->join('users', 'Product_Request_List.CreatedBy = users.UserID', 'LEFT');
-        $this->db->join('vehicle_models', 'Product_Request_List.Model = vehicle_models.ModelId', 'LEFT');
         $this->db->order_by('RequestId', 'DESC');
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
@@ -36,10 +35,13 @@ class Product_Request_List_Model extends CI_Model
 
     public function getListByDateAndVNo($from, $to, $vNo, $Status)
     {
-        $this->db->select('*');
+        $this->db->select('*, Product_Request_List.CreatedOn');
         $this->db->from('Product_Request_List');
         $this->db->where('Product_Request_List.Active', 1);
-        $this->db->where('Product_Request_List.Status', $Status);
+        if($Status){
+            $this->db->where('Product_Request_List.Status', $Status);
+        }
+       
         $this->db->join('users', 'Product_Request_List.CreatedBy = users.UserID', 'LEFT');
         if ($vNo) {
             $this->db->where('VehicleNo', $vNo);
@@ -74,13 +76,7 @@ class Product_Request_List_Model extends CI_Model
         $this->db->update('Product_Request_List', $data);
     }
 
-    public function deleteRequestListById($Request_id, $data)
-    {
-        $this->db->where('RequestId', $Request_id);
-        $this->db->update('Product_Request_List', $data);
-    }
-
-    public function updateStock($partId, $stock, $model)
+    public function updateStock($partId, $stock)
     {
         $this->db->set('QTYInHand', 'QTYInHand-'  . $stock . '', false);
         $this->db->where('PartsID', $partId);
@@ -94,21 +90,12 @@ class Product_Request_List_Model extends CI_Model
         $this->db->update('parts');
     }
 
-    public function getAllModels()
+    public function getVNos()
     {
-        $this->db->distinct('Model'); //You may use $this->db->distinct('name');  
-        $this->db->select('Model');
-        $this->db->from('parts');
-        // $this->db->distinct()->SELECT ('Model,PartsID')->from ('parts');
+        $this->db->distinct('VehicleNo');
+        $this->db->select('VehicleNo');
+        $this->db->from('Product_Request_List');
         return $this->db->get()->result_array();
     }
 
-    public function getVNos()
-    {
-        $this->db->distinct('VehicleNo'); //You may use $this->db->distinct('name');  
-        $this->db->select('VehicleNo');
-        $this->db->from('product_request_list');
-        // $this->db->distinct()->SELECT ('Model,PartsID')->from ('parts');
-        return $this->db->get()->result_array();
-    }
 }

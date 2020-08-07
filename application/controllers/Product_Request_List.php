@@ -75,15 +75,6 @@ class Product_Request_List extends REST_Controller
         $this->response($Product_Request_list, REST_Controller::HTTP_OK);
     }
 
-    public function getAllVehicleModels_get()
-    {
-
-        // $vehicle_Models_List = $this->Product_Request_List_Model->getAllVehicleModels();
-        $vehicle_Models_List = $this->Product_Request_List_Model->getAllModels();
-
-        $this->response($vehicle_Models_List, REST_Controller::HTTP_OK);
-    }
-
     public function getRequestListById_get()
     {
         $request_id = $this->get('requestId');
@@ -103,7 +94,7 @@ class Product_Request_List extends REST_Controller
         $from = $this->get('from');
         $to = $this->get('to');
         $vNo = $this->get('vNo');
-        $Status = $this->get('type');
+        $Status = $this->get('statusType');
         if (isset($from) && !empty($from)) {
             $from = date("Y-m-d H:i:s", $from);
         } else {
@@ -142,7 +133,7 @@ class Product_Request_List extends REST_Controller
         $partsCount = explode(",", $db_values['QTYRequested']);
         // Update stock count
         foreach ($partsIdList as $key => $value) {
-            $this->Product_Request_List_Model->updateStock($partsIdList[$key], $partsCount[$key], $db_values['Model']);
+            $this->Product_Request_List_Model->updateStock($partsIdList[$key], $partsCount[$key]);
         }
 
         $insertId = $this->Product_Request_List_Model->addRequestForm($db_values);
@@ -165,20 +156,52 @@ class Product_Request_List extends REST_Controller
         foreach ($partsIdList as $key => $value) {
             $this->Product_Request_List_Model->updateCancelStock($partsIdList[$key], $partsCount[$key]);
         }
-        $this->Product_Request_List_Model->deleteRequestListById($id, $db_values);
+        $this->Product_Request_List_Model->updateRequestsListById($id, $db_values);
 
         $this->response(["Request Form Deleted Successfully"], REST_Controller::HTTP_OK);
     }
 
     public function updateRequestFormById_put($id)
     {
-        // $db_values['Active'] = 0;
         $db_values['Status'] = "Delivered";
         $db_values['PartsIssueDate'] = date("Y-m-d H:i:s");
-        // print_r($db_values);
-        // exit;
-        $this->Product_Request_List_Model->deleteRequestListById($id, $db_values);
+        $this->Product_Request_List_Model->updateRequestsListById($id, $db_values);
 
-        $this->response(["Request Form Deleted Successfully"], REST_Controller::HTTP_OK);
+        $this->response(["Request Form status updated Successfully"], REST_Controller::HTTP_OK);
     }
+    public function updateEditedFormById_put($id)
+    {
+        $data = $this->Product_Request_List_Model->getRequestsListById($id);
+        $partsIdList = explode(",", $data[0]->PartsList);
+        $partsCount = explode(",", $data[0]->QTYRequested);
+        foreach ($partsIdList as $key => $value) {
+            $this->Product_Request_List_Model->updateCancelStock($partsIdList[$key], $partsCount[$key]);
+        }
+        
+        $db_values = array();
+        $db_values['VehicleNo'] = $this->put('vehicleNo');
+        $db_values['Model'] = $this->put('vehicleModel');
+        $db_values['PartsList'] = $this->put('partsList');
+        $db_values['QTYRequested'] = $this->put('qtyRequested');
+        $db_values['ServiceType'] = $this->put('serviceType');
+        $db_values['TechnicianName'] = $this->put('technicianName');
+        $db_values['PartsRequestedDate'] = date("Y-m-d H:i:s");;
+        $db_values['PartsIssueDate'] = null;
+        $db_values['Brand'] = $this->put('brand');
+        $partsIdList = explode(",", $db_values['PartsList']);
+        $partsCount = explode(",", $db_values['QTYRequested']);
+        // Update stock count
+        foreach ($partsIdList as $key => $value) {
+            $this->Product_Request_List_Model->updateStock($partsIdList[$key], $partsCount[$key]);
+        }
+
+        $insertId = $this->Product_Request_List_Model->updateRequestsListById($id, $db_values);
+        $res = array();
+        $res['insertId'] = $insertId;
+        $res['status']  = 'ok';
+        $res['message'] = "Parts requested form created successfully.";
+        $this->response($res, REST_Controller::HTTP_OK);
+
+    }
+
 }
