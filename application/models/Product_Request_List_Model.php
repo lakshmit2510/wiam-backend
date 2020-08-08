@@ -72,7 +72,7 @@ class Product_Request_List_Model extends CI_Model
     public function updateRequestsListById($Request_id, $data)
     {
 
-        $this->db->where('RequestId', $Request_id);
+        $this->db->where('RequestFormNo', $Request_id);
         $this->db->update('Product_Request_List', $data);
     }
 
