@@ -83,6 +83,14 @@ class Product_Request_List extends REST_Controller
         $this->response($request_list, REST_Controller::HTTP_OK);
     }
 
+    public function getListByRequestFormNo_get()
+    {
+        $request_form_no = $this->get('requestFormNo');
+        $request_list = $this->Product_Request_List_Model->getRequestsListFormNo($request_form_no);
+
+        $this->response($request_list, REST_Controller::HTTP_OK);
+    }
+
     public function getVehicleNoList_get()
     {
         $request_list = $this->Product_Request_List_Model->getVNos();
@@ -165,7 +173,7 @@ class Product_Request_List extends REST_Controller
     {
         $db_values['Status'] = "Delivered";
         $db_values['PartsIssueDate'] = date("Y-m-d H:i:s");
-        $this->Product_Request_List_Model->updateRequestsListById($id, $db_values);
+        $this->Product_Request_List_Model->updateRequestsListByFormNo($id, $db_values);
 
         $this->response(["Request Form status updated Successfully"], REST_Controller::HTTP_OK);
     }

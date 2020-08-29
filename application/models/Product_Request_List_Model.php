@@ -33,6 +33,14 @@ class Product_Request_List_Model extends CI_Model
         return $query->result();
     }
 
+    public function getRequestsListFormNo($Request_id)
+    {
+
+        $query = $this->db->get_where('Product_Request_List', array('RequestFormNo' => $Request_id));
+
+        return $query->result();
+    }
+
     public function getListByDateAndVNo($from, $to, $vNo, $Status)
     {
         $this->db->select('*, Product_Request_List.CreatedOn');
@@ -70,6 +78,13 @@ class Product_Request_List_Model extends CI_Model
     }
 
     public function updateRequestsListById($Request_id, $data)
+    {
+
+        $this->db->where('RequestID', $Request_id);
+        $this->db->update('Product_Request_List', $data);
+    }
+
+    public function updateRequestsListByFormNo($Request_id, $data)
     {
 
         $this->db->where('RequestFormNo', $Request_id);
