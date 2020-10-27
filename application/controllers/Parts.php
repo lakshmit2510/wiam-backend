@@ -130,8 +130,6 @@ class Parts extends REST_Controller
         $db_values['Images'] = $this->post('Images');
         $db_values['CreatedBy'] = $this->userInfo->userID;
         $db_values['CreatedOn'] = date("Y-m-d H:i:s");
-        // print_r($db_values);
-        // exit;
         $this->Parts_Model->addNewPart($db_values);
 
         $this->response(["New Product Added Successfully"], REST_Controller::HTTP_OK);

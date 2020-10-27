@@ -1,0 +1,1 @@
+*/30 * * * * php /Applications/MAMP/htdocs/wiam-backend/index.php cron send_cron

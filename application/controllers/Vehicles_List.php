@@ -43,4 +43,11 @@ class Vehicles_List extends REST_Controller
 
         $this->response($vehicles_list, REST_Controller::HTTP_OK);
     }
+
+    public function getAllVehiclesListByDate_get()
+    {
+        $vehicles_list = $this->Vehicles_List_Model->getVehicleEmailByDate();
+
+        $this->response($vehicles_list, REST_Controller::HTTP_OK);
+    }
 }
